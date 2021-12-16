@@ -7,6 +7,7 @@ import net.gamma02.zombieinfusion.common.ModBlocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.INameable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -24,9 +26,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class InfusionBlockEntity extends TileEntity implements ITickableTileEntity, IEnergyStorage, IInventory,
-        INamedContainerProvider, INameable//if you are reading this, im a favric
+public class InfusionBlockEntity extends TileEntity implements ITickableTileEntity, IEnergyStorage, IInventory, INamedContainerProvider, INameable//if you are reading this, im a fabric dev and I WILL use Yarn names lmfao
 {
+    private NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
     private int capacity;
     private int maxExtract;
     private int maxRecive;
@@ -112,56 +114,57 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
 
     @Override public int getSizeInventory()
     {
-        return 0;
+        return 2;
     }
 
     @Override public boolean isEmpty()
     {
-        return false;
+        return this.inventory.stream().allMatch(ItemStack::isEmpty);
     }
 
     @Override public ItemStack getStackInSlot(int index)
     {
-        return null;
+        return this.inventory.get(index);
     }
 
-    @Override public ItemStack decrStackSize(int index, int count)
-    {
-        return null;
-    }
-
-    @Override public ItemStack removeStackFromSlot(int index)
-    {
-        return null;
-    }
-
-    @Override public void setInventorySlotContents(int index, ItemStack stack)
+    @Override @Nonnull public ItemStack decrStackSize(int index, int count)
     {
 
+        return ItemStackHelper.getAndSplit(this.inventory, index, count);
     }
 
-    @Override public boolean isUsableByPlayer(PlayerEntity player)
+    @Override @Nonnull public ItemStack removeStackFromSlot(int index)
+    {
+        return ItemStackHelper.getAndRemove(this.inventory, index);
+    }
+
+    @Override public void setInventorySlotContents(int index, @Nonnull ItemStack stack)
+    {
+        this.inventory.set(index, stack);
+    }
+
+    @Override public boolean isUsableByPlayer( @Nonnull PlayerEntity player)
     {
         return true;
     }
 
     @Override public void clear()
     {
-
+        this.inventory.removeIf((itemStack) -> !itemStack.equals(ItemStack.EMPTY));
     }
 
-    @Override public ITextComponent getName()
+    @Override @Nonnull public ITextComponent getName()
     {
-        return null;
+        return ITextComponent.getTextComponentOrEmpty("DNA Infuser");
     }
 
-    @Override public ITextComponent getDisplayName()
+    @Override @Nonnull public ITextComponent getDisplayName()
     {
-        return null;
+        return ITextComponent.getTextComponentOrEmpty("DNA Infuser");
     }
 
-    @Nullable @Override public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_,
-            PlayerEntity p_createMenu_3_)
+    @Nullable @Override public Container createMenu(int p_createMenu_1_, @Nonnull PlayerInventory p_createMenu_2_,
+           @Nonnull PlayerEntity p_createMenu_3_)
     {
         return null;
     }
