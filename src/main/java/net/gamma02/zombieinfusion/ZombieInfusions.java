@@ -6,14 +6,19 @@ import net.gamma02.zombieinfusion.common.Items.Syringe;
 import net.gamma02.zombieinfusion.common.ModBlocks;
 import net.gamma02.zombieinfusion.common.blocks.InfusionBlock;
 import net.gamma02.zombieinfusion.common.blocks.InfusionBlockEntity;
+import net.gamma02.zombieinfusion.common.recipes.InfusionRecipe;
+import net.gamma02.zombieinfusion.common.recipes.InfusionRecipeType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.datafix.TypeReferences;
 import net.minecraft.util.registry.Registry;
@@ -46,6 +51,7 @@ import java.util.stream.Collectors;
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static final String modid = "zombie-infusion";
+    public static final IRecipeType<InfusionRecipe> INFUSION_RECIPE_TYPE = new InfusionRecipeType();
 
     public static ItemGroup ModGroup = new ItemGroup(ItemGroup.getGroupCountSafe(), "zombie_infusions")
     {
@@ -82,6 +88,17 @@ import java.util.stream.Collectors;
         MODITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         MinecraftForge.EVENT_BUS.register(this);
     }
+    private void registerRecipeSerializers (RegistryEvent.Register<IRecipeSerializer<?>> event) {
+
+        // Vanilla has a registry for recipe types, but it does not actively use this registry.
+        // While this makes registering your recipe type an optional step, I recommend
+        // registering it anyway to allow other mods to discover your custom recipe types.
+        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(INFUSION_RECIPE_TYPE.toString()), INFUSION_RECIPE_TYPE);
+
+        // Register the recipe serializer. This handles from json, from packet, and to packet.
+        event.getRegistry().register(InfusionRecipe.SERIALIZER);
+    }
+
 
     private void setup(final FMLCommonSetupEvent event)
     {

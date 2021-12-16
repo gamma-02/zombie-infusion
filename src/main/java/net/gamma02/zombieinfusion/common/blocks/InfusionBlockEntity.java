@@ -1,9 +1,10 @@
 package net.gamma02.zombieinfusion.common.blocks;
 
-import com.mojang.datafixers.types.Type;
-import mcp.MethodsReturnNonnullByDefault;
 import net.gamma02.zombieinfusion.ZombieInfusions;
+import net.gamma02.zombieinfusion.common.Items.DNA;
 import net.gamma02.zombieinfusion.common.ModBlocks;
+import net.gamma02.zombieinfusion.common.helpers.NBTHelper;
+import net.gamma02.zombieinfusion.common.recipes.InfusionRecipe;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -17,26 +18,27 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.INameable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
 
-public class InfusionBlockEntity extends TileEntity implements ITickableTileEntity, IEnergyStorage, IInventory, INamedContainerProvider, INameable//if you are reading this, im a fabric dev and I WILL use Yarn names lmfao
+public class InfusionBlockEntity extends TileEntity implements ITickableTileEntity, IEnergyStorage, IInventory, INamedContainerProvider, INameable
+        //if you are reading this, im a fabric dev, and I WILL use Yarn names lmfao
 {
-    private NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+    public final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
     private int capacity;
     private int maxExtract;
     private int maxRecive;
     private int energy;
+    private int craftingTicks = 0;
 
     public InfusionBlockEntity(TileEntityType<? extends InfusionBlockEntity> tileEntityTypeIn, int capacity, int maxReceive, int maxExtract)
     {
         super(ModBlocks.INFUSION_BLOCK_ENTITY_TYPE);
+        System.out.println("intended tile entity type: "+tileEntityTypeIn);
         this.capacity = capacity;
         this.maxRecive = maxReceive;
         this.maxExtract = maxExtract;
@@ -59,7 +61,48 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
 
     @Override public void tick()
     {
-        if(!Objects.requireNonNull(this.getWorld()).isRemote){
+        if(!Objects.requireNonNull(this.getWorld()).isRemote && this.getInputItem().getItem() instanceof DNA){
+            List<InfusionRecipe> recipes = this.getWorld().getRecipeManager().getRecipes(ZombieInfusions.INFUSION_RECIPE_TYPE, this, this.getWorld());
+
+            for (InfusionRecipe element:
+                 recipes)
+            {
+
+                if(element.matches(this, Objects.requireNonNull(world))){
+                    this.energy -= element.energy/element.ticks;
+                    int shrinkAmount = 0;
+                    float infusedpercent = NBTHelper.getInfusedPercent(this.getInputItem().serializeNBT());
+                    if(infusedpercent <= 0.1){
+                        shrinkAmount = 10;
+                    }else if(infusedpercent <=0.2){
+                        shrinkAmount = 15;
+                    }else if(infusedpercent <=0.3){
+                        shrinkAmount = 23;
+                    }else if(infusedpercent <=0.4){
+                        shrinkAmount = 35;
+                    }else if(infusedpercent <=0.5){
+                        shrinkAmount = 52;
+                    }else if(infusedpercent <= 0.6){
+                        shrinkAmount = 78;
+                    }else if(infusedpercent <= 0.7){
+                        shrinkAmount = 117;
+                    }else if(infusedpercent <= 0.8){
+                        shrinkAmount = 175;
+                    }else if(infusedpercent <= 0.9){
+                        shrinkAmount = 262;
+                    }
+                    this.inventory.get(1).shrink(shrinkAmount/element.ticks);
+
+                    this.craftingTicks++;
+                    if(craftingTicks>= element.ticks){
+                        this.craftingTicks = 0;
+                        NBTHelper.Infuse(element.infuser, infusedpercent+0.1f, this.getInputItem());
+
+
+
+                    }
+                }
+            }
             //TODO : do recipie stuff here, will figure out later
         }
     }
@@ -122,7 +165,7 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
         return this.inventory.stream().allMatch(ItemStack::isEmpty);
     }
 
-    @Override public ItemStack getStackInSlot(int index)
+    @Override @Nonnull public ItemStack getStackInSlot(int index)
     {
         return this.inventory.get(index);
     }
@@ -168,4 +211,16 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
     {
         return null;
     }
+
+    @Nonnull public ItemStack getInputItem(){
+        return this.inventory.get(0);
+    }
+    public boolean hasDNA(){
+        return this.inventory.get(0).getItem() == ZombieInfusions.DNA_ITEM.get();
+    }
+
+
+
+
+
 }
