@@ -4,20 +4,28 @@ import com.mojang.datafixers.types.Type;
 import mcp.MethodsReturnNonnullByDefault;
 import net.gamma02.zombieinfusion.ZombieInfusions;
 import net.gamma02.zombieinfusion.common.ModBlocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.INameable;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class InfusionBlockEntity extends TileEntity implements ITickableTileEntity, IEnergyStorage//if you are reading this, im a favric
+public class InfusionBlockEntity extends TileEntity implements ITickableTileEntity, IEnergyStorage, IInventory,
+        INamedContainerProvider, INameable//if you are reading this, im a favric
 {
     private int capacity;
     private int maxExtract;
@@ -102,5 +110,59 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
         return this.maxRecive > 0;
     }
 
-     
+    @Override public int getSizeInventory()
+    {
+        return 0;
+    }
+
+    @Override public boolean isEmpty()
+    {
+        return false;
+    }
+
+    @Override public ItemStack getStackInSlot(int index)
+    {
+        return null;
+    }
+
+    @Override public ItemStack decrStackSize(int index, int count)
+    {
+        return null;
+    }
+
+    @Override public ItemStack removeStackFromSlot(int index)
+    {
+        return null;
+    }
+
+    @Override public void setInventorySlotContents(int index, ItemStack stack)
+    {
+
+    }
+
+    @Override public boolean isUsableByPlayer(PlayerEntity player)
+    {
+        return true;
+    }
+
+    @Override public void clear()
+    {
+
+    }
+
+    @Override public ITextComponent getName()
+    {
+        return null;
+    }
+
+    @Override public ITextComponent getDisplayName()
+    {
+        return null;
+    }
+
+    @Nullable @Override public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_,
+            PlayerEntity p_createMenu_3_)
+    {
+        return null;
+    }
 }
