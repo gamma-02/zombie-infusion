@@ -1,11 +1,8 @@
 package net.gamma02.zombieinfusion.common.recipes;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.gamma02.zombieinfusion.ZombieInfusions;
-import net.gamma02.zombieinfusion.client.screens.InfusionContainer;
 
-import net.gamma02.zombieinfusion.common.Entities.DNAZombie;
 import net.gamma02.zombieinfusion.common.blocks.InfusionBlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,10 +11,7 @@ import net.minecraft.item.crafting.*;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.common.util.JsonUtils;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 

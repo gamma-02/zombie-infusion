@@ -1,4 +1,4 @@
-package net.gamma02.zombieinfusion.client.screens;
+package net.gamma02.zombieinfusion.common.blocks;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.gamma02.zombieinfusion.ZombieInfusions;

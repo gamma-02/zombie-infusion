@@ -1,42 +1,27 @@
 package net.gamma02.zombieinfusion;
 
-import com.mojang.datafixers.types.Type;
-import net.gamma02.zombieinfusion.client.screens.InfusionContainer;
+import net.gamma02.zombieinfusion.common.blocks.InfusionContainer;
 import net.gamma02.zombieinfusion.client.screens.InfusonScreen;
 import net.gamma02.zombieinfusion.common.Items.DNA;
 import net.gamma02.zombieinfusion.common.Items.Syringe;
-import net.gamma02.zombieinfusion.common.ModBlocks;
 import net.gamma02.zombieinfusion.common.blocks.InfusionBlock;
-import net.gamma02.zombieinfusion.common.blocks.InfusionBlockEntity;
 import net.gamma02.zombieinfusion.common.recipes.InfusionRecipe;
 import net.gamma02.zombieinfusion.common.recipes.InfusionRecipeType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.datafix.TypeReferences;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.registry.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -52,9 +37,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.system.CallbackI;
 
-import java.net.Proxy;
 import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -111,32 +94,28 @@ public class ZombieInfusions
         MODBLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         MODITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
 
-        registerClient();
 
         MinecraftForge.EVENT_BUS.register(this);
     }
 
 
-    @OnlyIn(Dist.CLIENT)
-    private void registerClient(){
 
-    }
     private void setup(final FMLCommonSetupEvent event)
     {
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
-        ScreenManager.registerFactory(INFUSION_CONTAINER.get(), InfusonScreen::new);
     }
 
 
     @OnlyIn(Dist.CLIENT)
     private void doClientStuff(final FMLClientSetupEvent event)
     {
-        ScreenManager.registerFactory(INFUSION_CONTAINER.get(), InfusonScreen::new);
+
         // do something that can only be done on the client
 
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+        ScreenManager.registerFactory(INFUSION_CONTAINER.get(), InfusonScreen::new);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event)
