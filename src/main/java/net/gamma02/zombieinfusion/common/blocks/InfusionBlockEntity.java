@@ -1,10 +1,13 @@
 package net.gamma02.zombieinfusion.common.blocks;
 
 import net.gamma02.zombieinfusion.ZombieInfusions;
+import net.gamma02.zombieinfusion.client.screens.InfusionContainer;
+import net.gamma02.zombieinfusion.client.screens.InfusonScreen;
 import net.gamma02.zombieinfusion.common.Items.DNA;
 import net.gamma02.zombieinfusion.common.ModBlocks;
 import net.gamma02.zombieinfusion.common.helpers.NBTHelper;
 import net.gamma02.zombieinfusion.common.recipes.InfusionRecipe;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -15,9 +18,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.INameable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
@@ -44,6 +52,7 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
         this.maxExtract = maxExtract;
         this.energy = Math.max(0 , Math.min(capacity, energy));
     }
+
 
     @Override
 
@@ -209,7 +218,8 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
     @Nullable @Override public Container createMenu(int p_createMenu_1_, @Nonnull PlayerInventory p_createMenu_2_,
            @Nonnull PlayerEntity p_createMenu_3_)
     {
-        return null;
+        System.out.println("hello");
+        return new InfusionContainer(p_createMenu_1_, p_createMenu_2_, this);
     }
 
     @Nonnull public ItemStack getInputItem(){
@@ -218,6 +228,7 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
     public boolean hasDNA(){
         return this.inventory.get(0).getItem() == ZombieInfusions.DNA_ITEM.get();
     }
+
 
 
 

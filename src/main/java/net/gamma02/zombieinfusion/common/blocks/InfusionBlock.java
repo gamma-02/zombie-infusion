@@ -9,9 +9,16 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class InfusionBlock extends ContainerBlock implements ITileEntityProvider
 {
@@ -28,6 +35,18 @@ public class InfusionBlock extends ContainerBlock implements ITileEntityProvider
     public boolean hasTileEntity(){
         return true;
     }
+
+    public ActionResultType onBlockActivated( @Nonnull BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos,  @Nonnull PlayerEntity player, @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit){
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if(tileEntity instanceof InfusionBlockEntity){
+            ((InfusionBlockEntity)tileEntity).createMenu(player.openContainer.windowId, player.inventory, player);
+        }
+        return ActionResultType.SUCCESS;
+    }
+
+
+
+
 
 
 }

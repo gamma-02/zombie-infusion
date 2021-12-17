@@ -1,6 +1,6 @@
 package net.gamma02.zombieinfusion.common.recipes;
 
-import jdk.jpackage.internal.resources.ResourceLocator;
+
 import net.gamma02.zombieinfusion.ZombieInfusions;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
