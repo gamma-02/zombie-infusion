@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.INameable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
@@ -28,7 +29,7 @@ import java.util.Objects;
 public class InfusionBlockEntity extends TileEntity implements ITickableTileEntity, IEnergyStorage, IInventory, INamedContainerProvider, INameable
         //if you are reading this, im a fabric dev, and I WILL use Yarn names lmfao
 {
-    public final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+    public final NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
     private int capacity;
     private int maxExtract;
     private int maxRecive;
@@ -98,6 +99,8 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
                     if(craftingTicks>= element.ticks){
                         this.craftingTicks = 0;
                         NBTHelper.Infuse(element.infuser, infusedpercent+0.1f, this.getInputItem());
+                        this.inventory.set(2, this.getInputItem());
+                        this.inventory.set(0, ItemStack.EMPTY);
 
 
 
@@ -106,6 +109,7 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
             }
             //TODO : do recipie stuff here, will figure out later
         }
+        this.energy = 50000;
     }
 
     @Override
@@ -158,7 +162,7 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
 
     @Override public int getSizeInventory()
     {
-        return 2;
+        return this.inventory.size();
     }
 
     @Override public boolean isEmpty()
@@ -210,8 +214,7 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
     @Nullable @Override public Container createMenu(int p_createMenu_1_, @Nonnull PlayerInventory p_createMenu_2_,
            @Nonnull PlayerEntity p_createMenu_3_)
     {
-        System.out.println("hello");
-        return new InfusionContainer(p_createMenu_1_, p_createMenu_2_, this);
+        return new InfusionContainer(p_createMenu_1_, p_createMenu_2_, this, this);
     }
 
     @Nonnull public ItemStack getInputItem(){

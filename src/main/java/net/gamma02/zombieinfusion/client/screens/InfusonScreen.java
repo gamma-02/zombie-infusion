@@ -3,12 +3,18 @@ package net.gamma02.zombieinfusion.client.screens;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.gamma02.zombieinfusion.ZombieInfusions;
+import net.gamma02.zombieinfusion.common.blocks.InfusionBlock;
+import net.gamma02.zombieinfusion.common.blocks.InfusionBlockEntity;
 import net.gamma02.zombieinfusion.common.blocks.InfusionContainer;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -18,6 +24,7 @@ public class InfusonScreen extends ContainerScreen<InfusionContainer> implements
 
 
     public InfusionContainer myContainer;
+    public TileEntity owner;
 
 
 
@@ -26,7 +33,10 @@ public class InfusonScreen extends ContainerScreen<InfusionContainer> implements
 
         super(screenContainer, inv, titleIn);
         this.myContainer = screenContainer;
-        System.out.println("J;dajs;dkh;fasj;eklfvjsdfajsdfja;j'w;");
+        TileEntity owner = inv.player.getEntityWorld().getTileEntity( playerInventory.player.getEntityWorld().rayTraceBlocks(new RayTraceContext( inv.player.getLookVec(), inv.player.getLookVec().add(5, 5, 5), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, inv.player)).getPos());
+        this.owner = owner;
+
+
 
     }
 
@@ -37,15 +47,20 @@ public class InfusonScreen extends ContainerScreen<InfusionContainer> implements
         Objects.requireNonNull(minecraft).getTextureManager().bindTexture(new ResourceLocation(ZombieInfusions.modid, "textures/gui/gui_100.png"));
         int x1 = (width - 176) / 2;
         int y1 = (height - (165)) / 2;
-
-        System.out.println("J;dajs;dkh;fasj;eklfvjsdfajsdfja;j'w;");
         blit(matrixStack, x1, y1, 0, 0, 176, 165);
-
     }
     @Override
     public void render(@Nonnull MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
+
+        if(this.owner instanceof IEnergyStorage)
+        {
+            this.font.drawText(matrices, ITextComponent.getTextComponentOrEmpty(("FE: " + ((InfusionBlockEntity)this.owner).getEnergyStored())), 8, 75,
+                    5);
+        }
+
         super.render(matrices, mouseX, mouseY, delta);
+
         renderHoveredTooltip(matrices, mouseX, mouseY);
 
     }
@@ -54,9 +69,9 @@ public class InfusonScreen extends ContainerScreen<InfusionContainer> implements
     protected void init() {
         super.init();
         // Center the title
-        //titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2 - 50;
-        //titleY = (20);
-        playerInventoryTitleY += 50 - 5;
+        titleX = (width - font.getStringPropertyWidth(title)) / 2 - 50;
+        titleY = (20);
+
 
     }
     @Override
@@ -66,4 +81,9 @@ public class InfusonScreen extends ContainerScreen<InfusionContainer> implements
         return this.myContainer;
     }
 
+    @Override public void tick()
+    {
+        super.tick();
+
+    }
 }

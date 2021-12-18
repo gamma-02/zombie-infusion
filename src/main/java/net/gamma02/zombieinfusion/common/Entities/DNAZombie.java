@@ -2,16 +2,20 @@ package net.gamma02.zombieinfusion.common.Entities;
 
 
 import net.gamma02.zombieinfusion.common.Items.DNA;
+import net.gamma02.zombieinfusion.common.helpers.NBTHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -72,4 +76,14 @@ public class DNAZombie extends ZombieEntity
             toDrop.setCount(64);
         }
     }
+
+    @Override public void read(CompoundNBT compound)
+    {
+        this.dataManager.set(InfuesdItem, ForgeRegistries.ITEMS.getValue(new ResourceLocation(compound.getString(NBTHelper.InfusedNamespaceKey), compound.getString(NBTHelper.InfusedEntryKey))).getDefaultInstance());
+        this.dataManager.set(InfuesdPrecent, compound.getFloat(NBTHelper.InfusedPercentKey));
+
+        super.read(compound);
+    }
 }
+
+
