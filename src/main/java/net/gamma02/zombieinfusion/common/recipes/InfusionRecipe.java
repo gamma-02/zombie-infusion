@@ -84,12 +84,12 @@ public class InfusionRecipe implements IRecipe<InfusionBlockEntity>
     private static class Sieralizer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<InfusionRecipe>{
 
         Sieralizer(){
-            this.setRegistryName(new ResourceLocation(ZombieInfusions.modid, "zombie_dna_infusion_recipe"));
+            this.setRegistryName(new ResourceLocation(ZombieInfusions.modid, "infusion_recipe_type"));
         }
 
         @Override @Nonnull public InfusionRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) throws NullPointerException
         {
-            final ResourceLocation item = ShapedRecipe.deserializeItem(JSONUtils.getJsonObject(json, "infusor")).getItem().getRegistryName();
+            final ResourceLocation item = ShapedRecipe.deserializeItem(json).getItem().getRegistryName();
             final Color ZombieTint = new Color(JSONUtils.getFloat(json, "red"), JSONUtils.getFloat(json, "green"), JSONUtils.getFloat(json, "blue"));
             final int energy = JSONUtils.getInt(json, "energy");
             final int ticks = JSONUtils.getInt(json, "time");

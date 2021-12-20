@@ -1,0 +1,9 @@
+{
+  "type": "zombie-infusion:infusion_recipe_type",
+  "item": "minecraft:iron_ingot",
+  "red": 1.0,
+  "green": 1.0,
+  "blue": 1.0,
+  "energy": 5000,
+  "time": 100
+}

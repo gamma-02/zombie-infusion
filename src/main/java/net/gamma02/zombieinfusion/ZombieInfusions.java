@@ -12,9 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
@@ -75,6 +73,12 @@ public class ZombieInfusions
     public static RegistryObject<Item> SYRINGE = MODITEMS.register("syringe", () -> new Syringe(new Item.Properties().group(ModGroup).maxStackSize(1)));
     public static RegistryObject<Item> DNA_ITEM = MODITEMS.register("zombie_dna", () -> new DNA(new Item.Properties().group(ModGroup).maxStackSize(32).containerItem(SYRINGE.get())));
     public static RegistryObject<ContainerType<InfusionContainer>> INFUSION_CONTAINER = MODCONTAINERS.register("zombie_infusors", () -> new ContainerType<InfusionContainer>(InfusionContainer::new));
+    public static RegistryObject<Block> CREATIVE_GENERATOR = MODBLOCKS.register("creative-infusor", () -> {return new InfusionBlock(AbstractBlock.Properties.from(Blocks.IRON_BLOCK));});
+    public static RegistryObject<Item> INFUSION_BLOCK_ITEM = MODITEMS.register("infusion_block_item", () -> register(INFUSION_BLOCK.get(), ModGroup));
+    public static RegistryObject<Item> CREATIVE_GENERATOR_ITEM = MODITEMS.register("creative_generator_item", () -> register(CREATIVE_GENERATOR.get(), ModGroup));
+    private static Item register(Block blockIn, ItemGroup itemGroupIn) {
+        return new BlockItem(blockIn, (new Item.Properties()).group(itemGroupIn));
+    }
 
 
     public ZombieInfusions()
@@ -88,11 +92,15 @@ public class ZombieInfusions
         // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(IRecipeSerializer.class, this::registerRecipeSerializers);
+
+
 
         // Register ourselves for server and other game events we are interested in
         MODCONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         MODBLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         MODITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+
 
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -105,6 +113,17 @@ public class ZombieInfusions
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+    }
+
+    public void registerRecipeSerializers (RegistryEvent.Register<IRecipeSerializer<?>> event) {
+
+        // Vanilla has a registry for recipe types, but it does not actively use this registry.
+        // While this makes registering your recipe type an optional step, I recommend
+        // registering it anyway to allow other mods to discover your custom recipe types.
+        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(INFUSION_RECIPE_TYPE.toString()), INFUSION_RECIPE_TYPE);
+
+        // Register the recipe serializer. This handles from json, from packet, and to packet.
+        event.getRegistry().register(InfusionRecipe.SERIALIZER);
     }
 
 
@@ -151,16 +170,6 @@ public class ZombieInfusions
             // register a new block here
             LOGGER.info("HELLO from Register Block");
         }
-        @SubscribeEvent
-        public void registerRecipeSerializers (RegistryEvent.Register<IRecipeSerializer<?>> event) {
 
-            // Vanilla has a registry for recipe types, but it does not actively use this registry.
-            // While this makes registering your recipe type an optional step, I recommend
-            // registering it anyway to allow other mods to discover your custom recipe types.
-            Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(INFUSION_RECIPE_TYPE.toString()), INFUSION_RECIPE_TYPE);
-
-            // Register the recipe serializer. This handles from json, from packet, and to packet.
-            event.getRegistry().register(InfusionRecipe.SERIALIZER);
-        }
     }
 }

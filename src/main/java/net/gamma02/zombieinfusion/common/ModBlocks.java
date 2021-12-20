@@ -1,6 +1,7 @@
 package net.gamma02.zombieinfusion.common;
 
 import net.gamma02.zombieinfusion.ZombieInfusions;
+import net.gamma02.zombieinfusion.common.blocks.CreativeGeneratorBlockEntity;
 import net.gamma02.zombieinfusion.common.blocks.InfusionBlock;
 import net.gamma02.zombieinfusion.common.blocks.InfusionBlockEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -15,14 +16,18 @@ import net.minecraftforge.registries.ObjectHolder;
 public class ModBlocks
 {
     public static TileEntityType<InfusionBlockEntity> INFUSION_BLOCK_ENTITY_TYPE;
+    public static TileEntityType<CreativeGeneratorBlockEntity> CREATIVE_BLOCK_ENTITY_TYPE;
     @SubscribeEvent
     public static void registerTE(RegistryEvent.Register<TileEntityType<?>> evt)
     {
         TileEntityType<InfusionBlockEntity> tempType = TileEntityType.Builder.create(InfusionBlockEntity::new, (ZombieInfusions.INFUSION_BLOCK.get())).build(null);
+         CREATIVE_BLOCK_ENTITY_TYPE = TileEntityType.Builder.create(CreativeGeneratorBlockEntity::new, (ZombieInfusions.CREATIVE_GENERATOR.get())).build(null);
         tempType.setRegistryName(ZombieInfusions.modid, "infuser-tile-entity-type");
+        CREATIVE_BLOCK_ENTITY_TYPE.setRegistryName(ZombieInfusions.modid, "creative-generator-type");
         INFUSION_BLOCK_ENTITY_TYPE = tempType;
-        System.out.println("NOTICE ME DAMMIT     " + INFUSION_BLOCK_ENTITY_TYPE);
-        evt.getRegistry().register(INFUSION_BLOCK_ENTITY_TYPE);
+
+
+        evt.getRegistry().registerAll(INFUSION_BLOCK_ENTITY_TYPE, CREATIVE_BLOCK_ENTITY_TYPE);
 
     }
 

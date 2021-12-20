@@ -63,15 +63,19 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
 
     @Override public void tick()
     {
+        this.energy = 50000;
         if(!Objects.requireNonNull(this.getWorld()).isRemote && this.getInputItem().getItem() instanceof DNA){
             List<InfusionRecipe> recipes = this.getWorld().getRecipeManager().getRecipes(ZombieInfusions.INFUSION_RECIPE_TYPE, this, this.getWorld());
+            System.out.println("working");
 
             for (InfusionRecipe element:
                  recipes)
             {
 
+
                 if(element.matches(this, Objects.requireNonNull(world))){
                     this.energy -= element.energy/element.ticks;
+
                     int shrinkAmount = 0;
                     float infusedpercent = NBTHelper.getInfusedPercent(this.getInputItem().serializeNBT());
                     if(infusedpercent <= 0.1){
@@ -107,7 +111,6 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
                     }
                 }
             }
-            //TODO : do recipie stuff here, will figure out later
         }
         this.energy = 50000;
     }
@@ -208,7 +211,12 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
 
     @Override @Nonnull public ITextComponent getDisplayName()
     {
-        return ITextComponent.getTextComponentOrEmpty("DNA Infuser");
+        if(this.getCustomName() != null)
+        {
+            return this.getCustomName();
+        }else{
+            return this.getName();
+        }
     }
 
     @Nullable @Override public Container createMenu(int p_createMenu_1_, @Nonnull PlayerInventory p_createMenu_2_,
