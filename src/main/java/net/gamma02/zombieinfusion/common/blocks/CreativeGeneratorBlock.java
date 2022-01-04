@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 public class CreativeGeneratorBlock extends ContainerBlock
 {
-    protected CreativeGeneratorBlock(Properties builder)
+    public CreativeGeneratorBlock(Properties builder)
     {
         super(builder);
     }

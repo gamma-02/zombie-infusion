@@ -28,11 +28,18 @@ public class NBTHelper
 
     }
 
-    public static float getInfusedPercent(CompoundNBT nbt) throws NullPointerException{
-        if(nbt.contains(InfusedPercentKey)){
-            return nbt.getFloat(InfusedPercentKey);
+    public static float getInfusedPercent(ItemStack itemIn) {
+        if(itemIn.serializeNBT().contains(InfusedPercentKey)){
+            return itemIn.serializeNBT().getFloat(InfusedPercentKey);
         }else{
-            throw new NullPointerException("DNA was infused without a percent!");
+            CompoundNBT d = itemIn.getTag();
+
+            if (d != null)
+            {
+                d.putFloat(InfusedPercentKey, 0.0f);
+            }
+            itemIn.setTag(d);
+            return itemIn.serializeNBT().getFloat(InfusedPercentKey);
         }
     }
 
@@ -44,8 +51,8 @@ public class NBTHelper
     }
     public static void Infuse(Item infuser, float percent, ItemStack itemIn) {
         if(itemIn.getItem() instanceof DNA){
-            CompoundNBT itemInNBT = itemIn.serializeNBT();
-            itemIn.deserializeNBT(InfuseDNA(itemInNBT, infuser, percent));
+            CompoundNBT itemInNBT = itemIn.getTag();
+            itemIn.setTag(InfuseDNA(itemInNBT != null ? itemInNBT : new CompoundNBT(), infuser, percent));
 
         }
     }

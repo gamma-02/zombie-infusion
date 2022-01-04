@@ -1,8 +1,10 @@
 package net.gamma02.zombieinfusion.common.Entities;
 
 
+import net.gamma02.zombieinfusion.ZombieInfusions;
 import net.gamma02.zombieinfusion.common.Items.DNA;
 import net.gamma02.zombieinfusion.common.helpers.NBTHelper;
+import net.gamma02.zombieinfusion.common.recipes.InfusionRecipe;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.item.Item;
@@ -18,20 +20,26 @@ import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.Random;
 
 public class DNAZombie extends ZombieEntity
 {
     private static final DataParameter<ItemStack> InfuesdItem = EntityDataManager.createKey(DNAZombie.class, DataSerializers.ITEMSTACK);
     private static final DataParameter<Float> InfuesdPrecent = EntityDataManager.createKey(DNAZombie.class, DataSerializers.FLOAT);
+    private Color color;
+
     public DNAZombie(EntityType<? extends DNAZombie> type, World worldIn)
     {
         super(type, worldIn);
+
+
     }
     public DNAZombie(EntityType<? extends DNAZombie> type, World worldIn, Item itemIn, float floatIn){
         super(type, worldIn);
         this.dataManager.set(InfuesdPrecent, floatIn);
         this.dataManager.set(InfuesdItem, itemIn.getDefaultInstance());
+
 
     }
     public void registerData(){
@@ -83,6 +91,27 @@ public class DNAZombie extends ZombieEntity
         this.dataManager.set(InfuesdPrecent, compound.getFloat(NBTHelper.InfusedPercentKey));
 
         super.read(compound);
+        for(InfusionRecipe e : this.world.getRecipeManager().getRecipesForType(ZombieInfusions.INFUSION_RECIPE_TYPE)){
+            try
+            {
+                if (e.getInfuser() == this.dataManager.get(InfuesdItem).getItem())
+                {
+                    this.color = e.getZombieColor();
+                }
+            }catch (NullPointerException exception){
+                System.out.println("thingies bein annoying again");
+            }
+        }
+    }
+
+    @Nullable
+    public Color getColor(){
+        for(InfusionRecipe e : this.world.getRecipeManager().getRecipesForType(ZombieInfusions.INFUSION_RECIPE_TYPE)){
+            if(e.getInfuser() == this.dataManager.get(InfuesdItem).getItem()){
+                return e.getZombieColor();
+            }
+        }
+        return null;
     }
 }
 

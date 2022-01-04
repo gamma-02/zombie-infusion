@@ -1,5 +1,7 @@
 package net.gamma02.zombieinfusion;
 
+import net.gamma02.zombieinfusion.common.Entities.ModEntities;
+import net.gamma02.zombieinfusion.common.blocks.CreativeGeneratorBlock;
 import net.gamma02.zombieinfusion.common.blocks.InfusionContainer;
 import net.gamma02.zombieinfusion.client.screens.InfusonScreen;
 import net.gamma02.zombieinfusion.common.Items.DNA;
@@ -73,7 +75,7 @@ public class ZombieInfusions
     public static RegistryObject<Item> SYRINGE = MODITEMS.register("syringe", () -> new Syringe(new Item.Properties().group(ModGroup).maxStackSize(1)));
     public static RegistryObject<Item> DNA_ITEM = MODITEMS.register("zombie_dna", () -> new DNA(new Item.Properties().group(ModGroup).maxStackSize(32).containerItem(SYRINGE.get())));
     public static RegistryObject<ContainerType<InfusionContainer>> INFUSION_CONTAINER = MODCONTAINERS.register("zombie_infusors", () -> new ContainerType<InfusionContainer>(InfusionContainer::new));
-    public static RegistryObject<Block> CREATIVE_GENERATOR = MODBLOCKS.register("creative-infusor", () -> {return new InfusionBlock(AbstractBlock.Properties.from(Blocks.IRON_BLOCK));});
+    public static RegistryObject<Block> CREATIVE_GENERATOR = MODBLOCKS.register("creative-infusor", () -> {return new CreativeGeneratorBlock(AbstractBlock.Properties.from(Blocks.IRON_BLOCK));});
     public static RegistryObject<Item> INFUSION_BLOCK_ITEM = MODITEMS.register("infusion_block_item", () -> register(INFUSION_BLOCK.get(), ModGroup));
     public static RegistryObject<Item> CREATIVE_GENERATOR_ITEM = MODITEMS.register("creative_generator_item", () -> register(CREATIVE_GENERATOR.get(), ModGroup));
     private static Item register(Block blockIn, ItemGroup itemGroupIn) {

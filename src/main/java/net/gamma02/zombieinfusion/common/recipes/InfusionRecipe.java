@@ -31,6 +31,7 @@ public class InfusionRecipe implements IRecipe<InfusionBlockEntity>
 
     public InfusionRecipe(ResourceLocation id, ResourceLocation item, Color color, int energy, int ticks){
         this.id = id;
+        System.out.println("recipie working or something idk");
         try
         {
             this.infuser = ForgeRegistries.ITEMS.getValue(item);
@@ -79,6 +80,13 @@ public class InfusionRecipe implements IRecipe<InfusionBlockEntity>
     @Override @Nonnull public IRecipeType<?> getType()
     {
         return ZombieInfusions.INFUSION_RECIPE_TYPE;
+    }
+
+    public Item getInfuser(){
+        return infuser;
+    }
+    public Color getZombieColor(){
+        return this.zombieColor;
     }
 
     private static class Sieralizer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<InfusionRecipe>{

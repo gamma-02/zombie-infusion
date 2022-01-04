@@ -26,7 +26,7 @@ public class DNA extends Item
             CompoundNBT nbt = tileentity.serializeNBT();
             CompoundNBT data = new CompoundNBT();
             data.putString("id", "zombie-infusion");
-            data.putFloat(NBTHelper.InfusedPercentKey, NBTHelper.getInfusedPercent(context.getItem().serializeNBT()));
+            data.putFloat(NBTHelper.InfusedPercentKey, NBTHelper.getInfusedPercent(context.getItem()));
             data.putString(NBTHelper.InfusedNamespaceKey, context.getItem().serializeNBT().getString(NBTHelper.InfusedNamespaceKey));
             data.putString(NBTHelper.InfusedEntryKey, context.getItem().serializeNBT().getString(NBTHelper.InfusedEntryKey));
             nbt.put("SpawnerData", data);

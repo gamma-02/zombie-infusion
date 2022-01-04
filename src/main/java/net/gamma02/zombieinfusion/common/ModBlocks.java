@@ -20,6 +20,7 @@ public class ModBlocks
     @SubscribeEvent
     public static void registerTE(RegistryEvent.Register<TileEntityType<?>> evt)
     {
+        System.out.println("registering?????? maybe?????");
         TileEntityType<InfusionBlockEntity> tempType = TileEntityType.Builder.create(InfusionBlockEntity::new, (ZombieInfusions.INFUSION_BLOCK.get())).build(null);
          CREATIVE_BLOCK_ENTITY_TYPE = TileEntityType.Builder.create(CreativeGeneratorBlockEntity::new, (ZombieInfusions.CREATIVE_GENERATOR.get())).build(null);
         tempType.setRegistryName(ZombieInfusions.modid, "infuser-tile-entity-type");

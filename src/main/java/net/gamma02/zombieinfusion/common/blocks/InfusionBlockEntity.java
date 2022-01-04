@@ -5,6 +5,7 @@ import net.gamma02.zombieinfusion.common.Items.DNA;
 import net.gamma02.zombieinfusion.common.ModBlocks;
 import net.gamma02.zombieinfusion.common.helpers.NBTHelper;
 import net.gamma02.zombieinfusion.common.recipes.InfusionRecipe;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -12,6 +13,7 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -64,9 +66,9 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
     @Override public void tick()
     {
         this.energy = 50000;
-        if(!Objects.requireNonNull(this.getWorld()).isRemote && this.getInputItem().getItem() instanceof DNA){
+        if(!Objects.requireNonNull(this.getWorld()).isRemote && this.hasDNA()){
             List<InfusionRecipe> recipes = this.getWorld().getRecipeManager().getRecipes(ZombieInfusions.INFUSION_RECIPE_TYPE, this, this.getWorld());
-            System.out.println("working");
+
 
             for (InfusionRecipe element:
                  recipes)
@@ -75,9 +77,9 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
 
                 if(element.matches(this, Objects.requireNonNull(world))){
                     this.energy -= element.energy/element.ticks;
-
+                    System.out.println("working");
                     int shrinkAmount = 0;
-                    float infusedpercent = NBTHelper.getInfusedPercent(this.getInputItem().serializeNBT());
+                    float infusedpercent = NBTHelper.getInfusedPercent(this.getStackInSlot(0));
                     if(infusedpercent <= 0.1){
                         shrinkAmount = 10;
                     }else if(infusedpercent <=0.2){
@@ -97,13 +99,17 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
                     }else if(infusedpercent <= 0.9){
                         shrinkAmount = 262;
                     }
-                    this.inventory.get(1).shrink(shrinkAmount/element.ticks);
+                    if(this.getInputItem().getCount() > 1)
+                    {
+                        this.inventory.get(1).setCount(this.inventory.get(1).getCount() - shrinkAmount / element.ticks);
+                    }
+
 
                     this.craftingTicks++;
                     if(craftingTicks>= element.ticks){
                         this.craftingTicks = 0;
-                        NBTHelper.Infuse(element.infuser, infusedpercent+0.1f, this.getInputItem());
-                        this.inventory.set(2, this.getInputItem());
+                        NBTHelper.Infuse(element.infuser, infusedpercent+0.1f, this.getStackInSlot(0));
+                        this.inventory.set(2, this.getStackInSlot(0));
                         this.inventory.set(0, ItemStack.EMPTY);
 
 
@@ -226,15 +232,29 @@ public class InfusionBlockEntity extends TileEntity implements ITickableTileEnti
     }
 
     @Nonnull public ItemStack getInputItem(){
-        return this.inventory.get(0);
+        return this.inventory.get(1);
     }
     public boolean hasDNA(){
         return this.inventory.get(0).getItem() == ZombieInfusions.DNA_ITEM.get();
     }
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
+
+        ItemStackHelper.loadAllItems(nbt, this.inventory);
 
 
+    }
+
+    public CompoundNBT write(CompoundNBT compound) {
+        super.write(compound);
+
+        ItemStackHelper.saveAllItems(compound, this.inventory);
 
 
+        return compound;
+    }
 
-
+    public ItemStack getDNA(){
+        return this.inventory.get(0);
+    }
 }

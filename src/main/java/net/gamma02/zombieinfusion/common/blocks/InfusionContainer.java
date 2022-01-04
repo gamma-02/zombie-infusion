@@ -27,8 +27,8 @@ public class InfusionContainer extends Container
     public InfusionContainer(int id, PlayerInventory inventory, IInventory inventory1, @Nullable InfusionBlockEntity energy){
 
         super(ZombieInfusions.INFUSION_CONTAINER.get(), id);
-        this.addSlot(new Slot(inventory1, 0, 45, 16));
-        this.addSlot(new Slot(inventory1, 1, 44, 56));
+        this.addSlot(new Slot(inventory1, 1, 45, 16));
+        this.addSlot(new Slot(inventory1, 0, 44, 56));
         this.addSlot(new Slot(inventory1, 2, 106, 36));
         this.energy = energy;
 
@@ -81,6 +81,7 @@ public class InfusionContainer extends Container
         }
         return itemstack;
     }
+
 
 
 
